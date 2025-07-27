@@ -36,7 +36,6 @@ class TestPlayer:
         with pytest.raises(TypeError, match='Username must be a string'):
             PlayerUsername(12345)
 
-
     def test_should_raise_error_when_username_is_null(self):
         # Act & Assert
         with pytest.raises(ValueError, match='Username cannot be null or empty'):
