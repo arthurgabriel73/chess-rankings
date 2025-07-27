@@ -1,0 +1,29 @@
+[tool.poetry]
+package-mode = false
+[project]
+name = "chess-rankings"
+version = "0.1.0"
+description = ""
+authors = [
+    { name = "arthurgabriel73", email = "arthurgabriel73@gmail.com" }
+]
+readme = "README.md"
+requires-python = ">=3.13"
+
+[tool.poetry.dependencies]
+requests = "^2.32.4"
+uvicorn = "^0.35.0"
+fastapi = "^0.116.1"
+pydantic = "^2.11.7"
+pydantic-settings = "^2.10.1"
+
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.4.1"
+coverage = "^7.9.1"
+ruff = "^0.12.5"
