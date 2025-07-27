@@ -10,6 +10,6 @@ from src.main.infra.adapter.driven.console.console_ui_handler import ConsoleUIHa
 
 @lru_cache
 def list_top_players_driver_factory() -> ListTopPlayersDriverPort:
-    logger = logging.getLogger('ConsoleUIHandler')
+    logger = logging.getLogger(' ConsoleUIHandler')
     logging.basicConfig(level=logging.INFO)
     return ListTopPlayersUseCase(PlayerGatewayAdapter(LichessApiClient()), ConsoleUIHandler(logger))
