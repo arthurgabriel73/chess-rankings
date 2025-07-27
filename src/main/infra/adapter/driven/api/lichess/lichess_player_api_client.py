@@ -11,10 +11,9 @@ class LichessApiClient(PlayerApi):
         env = get_environment_variables()
         self._base_url = base_url or env.LICHESS_API_BASE_URL
 
-    def list_top_players(self, request: ListTopPlayersRequest) -> ListTopPlayersResponse:
+    def get_top_players_usernames(self, request: ListTopPlayersRequest) -> ListTopPlayersResponse:
         category, num_players = request.category, request.num_players
         response = requests.get(f'{self._base_url}/player/top/{num_players}/{category}')
         if response.status_code != 200:
             raise Exception(f'Failed to fetch top players: {response.status_code} - {response.text}')
-        data = response.json()
-        return ListTopPlayersResponse(data)
+        return ListTopPlayersResponse(response.json())

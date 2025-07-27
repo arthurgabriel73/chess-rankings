@@ -2,12 +2,11 @@ from abc import ABC, abstractmethod
 from typing import List
 
 from src.main.domain.history import History
-from src.main.domain.player import Player
 
 
 class PlayerGateway(ABC):
     @abstractmethod
-    def list_top_players(self, category: str, num_players: int) -> List[Player]:
+    def get_top_players_usernames(self, category: str, num_players: int) -> List[str]:
         pass
 
     @abstractmethod

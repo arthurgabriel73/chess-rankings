@@ -6,5 +6,5 @@ from src.main.infra.adapter.driven.api.dto.response.list_top_players_response im
 
 class PlayerApi(ABC):
     @abstractmethod
-    def list_top_players(self, request: ListTopPlayersRequest) -> ListTopPlayersResponse:
+    def get_top_players_usernames(self, request: ListTopPlayersRequest) -> ListTopPlayersResponse:
         pass
