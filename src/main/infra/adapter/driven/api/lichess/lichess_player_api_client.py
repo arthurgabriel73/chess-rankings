@@ -13,7 +13,7 @@ class LichessApiClient(PlayerApi):
 
     def list_top_players(self, request: ListTopPlayersRequest) -> ListTopPlayersResponse:
         category, num_players = request
-        response = requests.get(self._base_url + '/player' + f'/top/{num_players}/{category}')
+        response = requests.get(f'{self._base_url}/player/top/{num_players}/{category}')
         if response.status_code != 200:
             raise Exception(f'Failed to fetch top players: {response.status_code} - {response.text}')
         data = response.json()
