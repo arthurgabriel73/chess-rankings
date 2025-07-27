@@ -5,7 +5,7 @@ include .env.test
 export ENV=test
 export PYTHONPATH=$(pwd)
 
-test: unit
+test: unit integration
 
 unit:
 	@echo "\033[0;36mRunning unit tests...\033[0m"
