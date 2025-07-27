@@ -5,7 +5,12 @@ include .env.test
 export ENV=test
 export PYTHONPATH=$(pwd)
 
-test: unit integration
+test:
+	poetry run coverage run -m pytest -v src/test/unit
+	poetry run coverage run -m pytest -v src/test/integration
+	poetry run coverage combine
+	poetry run coverage report --fail-under=80
+	poetry run coverage html
 
 unit:
 	@echo "\033[0;36mRunning unit tests...\033[0m"
