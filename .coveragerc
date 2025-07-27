@@ -1,0 +1,12 @@
+[run]
+source = src
+omit = */test/*
+branch = True
+parallel = True
+
+[report]
+exclude_lines =
+    pragma: no cover
+    @abstractmethod
+    def __repr__
+    raise NotImplementedError

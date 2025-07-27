@@ -1,7 +1,8 @@
-from dataclasses import dataclass
 from typing import List
 
+from src.main.domain.player_username import PlayerUsername
 
-@dataclass
+
 class ListTopPlayersQueryOutput:
-    usernames: List[str]
+    def __init__(self, usernames: List[PlayerUsername]):
+        self.usernames = [usernames.value() for usernames in usernames]
