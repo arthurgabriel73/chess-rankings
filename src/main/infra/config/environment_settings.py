@@ -18,7 +18,9 @@ class EnvironmentSettings(BaseSettings):
     APP_PORT: Optional[int] = Field(validation_alias='APP_PORT_VALUE') or '3000'
     LICHESS_API_BASE_URL: Optional[str] = Field(validation_alias='LICHESS_API_BASE_URL_VALUE') or 'http://test_lichess'
 
-    model_config = SettingsConfigDict(env_file=get_env_filename(), env_ignore_empty=True, populate_by_name=True, extra='allow')
+    model_config = SettingsConfigDict(
+        env_file=get_env_filename(), env_ignore_empty=True, populate_by_name=True, extra='allow'
+    )
 
 
 @lru_cache

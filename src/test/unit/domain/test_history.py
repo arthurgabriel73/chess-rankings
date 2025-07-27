@@ -6,7 +6,7 @@ class TestHistory:
         # Arrange
         category = 'test_category'
         player_username = 'test_player'
-        rating_history = { '2020-07-30': 1510, '2020-07-31': 2000 }
+        rating_history = {'2020-07-30': 1510, '2020-07-31': 2000}
 
         # Act
         history = History(category=category, player_username=player_username, rating_history=rating_history)

@@ -1,7 +1,4 @@
-from src.main.infra.config.environment_settings import (
-    get_environment_variables,
-    get_env_filename,
-)
+from src.main.infra.config.environment_settings import get_env_filename, get_environment_variables
 
 
 class TestGetEnvironmentVariables:

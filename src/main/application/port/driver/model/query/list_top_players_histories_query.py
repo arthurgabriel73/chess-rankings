@@ -16,9 +16,7 @@ class ListTopPlayersHistoriesQuery:
         if not self.category or not isinstance(self.category, str):
             raise ValueError('Invalid category')
         if len(self.category) < 3 or len(self.category) > 100:
-            raise ValueError(
-                'Category must be between 3 and 100 characters long'
-            )
+            raise ValueError('Category must be between 3 and 100 characters long')
 
     def validate_num_players(self):
         if not isinstance(self.num_players, int) or self.num_players <= 0:
