@@ -1,9 +1,8 @@
-from dataclasses import dataclass
 from typing import List
 
 from src.main.domain.history import History
 
 
-@dataclass
 class ListTopPlayersHistoriesQueryOutput:
-    histories: List[History]
+    def __init__(self, histories: List[History]):
+        self.histories = [{'player': record.player_username, 'history': record.rating_history} for record in histories]
