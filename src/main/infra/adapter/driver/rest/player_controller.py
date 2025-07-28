@@ -1,8 +1,15 @@
 from fastapi import APIRouter
 
+from src.main.application.port.driver.model.command.generate_top_players_histories_file_command import (
+    GenerateTopPlayersHistoriesFileCommand,
+)
 from src.main.application.port.driver.model.query.list_top_players_histories_query import ListTopPlayersHistoriesQuery
 from src.main.application.port.driver.model.query.list_top_players_query import ListTopPlayersQuery
-from src.main.infra.config.ioc import list_top_players_driver_factory, list_top_players_histories_driver_factory
+from src.main.infra.config.ioc import (
+    generate_top_players_histories_file_driver_factory,
+    list_top_players_driver_factory,
+    list_top_players_histories_driver_factory,
+)
 
 PLAYER_URL = '/players'
 
@@ -21,3 +28,10 @@ def list_top_players_rating_histories(category: str, num_players: int, num_days:
     driver = list_top_players_histories_driver_factory()
     query = ListTopPlayersHistoriesQuery(category, num_players, num_days)
     return driver.execute(query)
+
+
+@players_router.post('/top/rating-history/{category}/{num_players}/generate-file', status_code=201)
+def generate_top_players_histories_file(category: str, num_players: int, num_days: int):
+    driver = generate_top_players_histories_file_driver_factory()
+    command = GenerateTopPlayersHistoriesFileCommand(category, num_players, num_days)
+    return driver.execute(command)
