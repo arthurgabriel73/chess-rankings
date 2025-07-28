@@ -7,7 +7,7 @@ from src.main.domain.player_username import PlayerUsername
 
 
 class MockPlayerGateway(PlayerGateway):
-    def list_top_players(self, category: str, num_players: int) -> List[Player]:
+    def get_top_players_usernames(self, category: str, num_players: int) -> List[Player]:
         usernames = [f'user{i}' for i in range(num_players)]
         return [Player(username=PlayerUsername(username)) for username in usernames]
 
