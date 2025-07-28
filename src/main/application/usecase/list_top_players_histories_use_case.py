@@ -1,3 +1,5 @@
+from typing import List
+
 from src.main.application.port.driven.api.player_gateway import PlayerGateway
 from src.main.application.port.driven.ui.ui_handler import UIHandler
 from src.main.application.port.driver.list_top_players_histories_driver_port import ListTopPlayersHistoriesDriverPort
@@ -5,6 +7,7 @@ from src.main.application.port.driver.model.query.list_top_players_histories_que
 from src.main.application.port.driver.model.query.list_top_players_histories_query_output import (
     ListTopPlayersHistoriesQueryOutput,
 )
+from src.main.domain.history import History
 
 
 class ListTopPlayersHistoriesUseCase(ListTopPlayersHistoriesDriverPort):
@@ -16,5 +19,9 @@ class ListTopPlayersHistoriesUseCase(ListTopPlayersHistoriesDriverPort):
         category, num_players, num_days = query.category, query.num_players, query.num_days
         usernames = self.player_gateway.get_top_players_usernames(category, num_players)
         histories = self.player_gateway.get_players_rating_histories(category, usernames, num_days)
-        self._ui_handler.render_rating_histories(histories)
+        self._render_top_player_rating_history(histories)
         return ListTopPlayersHistoriesQueryOutput(histories)
+
+    def _render_top_player_rating_history(self, histories: List[History]) -> None:
+        top_player_rating_history = histories[0]
+        self._ui_handler.render_rating_history(top_player_rating_history)

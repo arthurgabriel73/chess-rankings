@@ -10,5 +10,5 @@ class UIHandler(ABC):
         pass
 
     @abstractmethod
-    def render_rating_histories(self, histories: List[History]) -> None:
+    def render_rating_history(self, history: History) -> None:
         pass
