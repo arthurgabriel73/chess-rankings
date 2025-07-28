@@ -10,5 +10,5 @@ class PlayerGateway(ABC):
         pass
 
     @abstractmethod
-    def list_players_rating_histories(self, category: str, usernames: List[str], num_days: int) -> List[History]:
+    def get_players_rating_histories(self, category: str, usernames: List[str], num_days: int) -> List[History]:
         pass

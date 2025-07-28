@@ -6,9 +6,9 @@ from src.main.domain.history import History
 
 class UIHandler(ABC):
     @abstractmethod
-    def render_players_usernames(self, usernames: List[str]) -> None:
+    def render_usernames(self, usernames: List[str]) -> None:
         pass
 
     @abstractmethod
-    def render_players_rating_histories(self, histories: List[History]) -> None:
+    def render_rating_histories(self, histories: List[History]) -> None:
         pass

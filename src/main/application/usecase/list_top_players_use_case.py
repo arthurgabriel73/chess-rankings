@@ -12,5 +12,5 @@ class ListTopPlayersUseCase(ListTopPlayersDriverPort):
 
     def execute(self, query: ListTopPlayersQuery) -> ListTopPlayersQueryOutput:
         usernames = self.player_gateway.get_top_players_usernames(query.category, query.num_players)
-        self._ui_handler.render_players_usernames(usernames)
+        self._ui_handler.render_usernames(usernames)
         return ListTopPlayersQueryOutput(usernames)

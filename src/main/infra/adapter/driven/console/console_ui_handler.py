@@ -9,8 +9,8 @@ class ConsoleUIHandler(UIHandler):
     def __init__(self, logger: Logger):
         self.logger = logger
 
-    def render_players_usernames(self, usernames: List[str]) -> None:
+    def render_usernames(self, usernames: List[str]) -> None:
         self.logger.info(usernames)
 
-    def render_players_rating_histories(self, histories: List[History]) -> None:
+    def render_rating_histories(self, histories: List[History]) -> None:
         pass
