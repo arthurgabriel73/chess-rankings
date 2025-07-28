@@ -31,7 +31,7 @@ class GenerateTopPlayersHistoriesFileUseCase(GenerateTopPlayersHistoriesFileDriv
         usernames = self._player_gateway.get_top_players_usernames(category, num_players)
         histories = self._player_gateway.get_players_rating_histories(category, usernames, num_days)
         file = self._generate_histories_file(histories)
-        file_key = self._generate_file_key(category, num_players, num_days)
+        file_key = GenerateTopPlayersHistoriesFileUseCase._generate_file_key(category, num_players, num_days)
         self._upload_file(file_key, file)
         file_url = self._file_storage_service.get_file_url(file_key)
         download_url = self._file_storage_service.get_file_download_url(file_key)
@@ -40,8 +40,9 @@ class GenerateTopPlayersHistoriesFileUseCase(GenerateTopPlayersHistoriesFileDriv
     def _generate_histories_file(self, histories: List[History]) -> bytes:
         return self._file_generator_service.generate_history_file(histories)
 
-    def _generate_file_key(self, category: str, num_players: int, num_days: int) -> str:
-        pass
+    @staticmethod
+    def _generate_file_key(category: str, num_players: int, num_days: int) -> str:
+        return f'top_{num_players}_{category}_players_histories_{num_days}_days'
 
     def _upload_file(self, file_key: str, file: bytes) -> None:
         self._file_storage_service.upload_file(file_key, file)

@@ -10,12 +10,28 @@ class FileGeneratorServiceGateway(FileGeneratorService):
         self._csv_generator = csv_generator
 
     def generate_history_file(self, histories: List[History]) -> bytes:
-        headers = self._generate_history_headers(histories)
-        rows = self._generate_history_rows(histories)
+        headers = FileGeneratorServiceGateway._generate_history_headers(histories)
+        rows = FileGeneratorServiceGateway._generate_history_rows(histories)
         return self._csv_generator.generate_csv(headers, rows, delimiter=',')
 
-    def _generate_history_headers(self, histories: List[History]) -> List[str]:
-        pass
+    @staticmethod
+    def _generate_history_headers(histories: List[History]) -> List[str]:
+        if not histories:
+            return []
+        dates = set()
+        for history in histories:
+            dates.update(history.rating_history.keys())
+        sorted_dates = sorted(dates)
+        headers = ['username'] + sorted_dates
+        return headers
 
-    def _generate_history_rows(self, histories: List[History]) -> List[str]:
-        pass
+    @staticmethod
+    def _generate_history_rows(histories: List[History]) -> List[str]:
+        rows = []
+        for history in histories:
+            row = [history.player_username]
+            sorted_dates = sorted(history.rating_history.keys())
+            for date in sorted_dates:
+                row.append(str(history.rating_history[date]))
+            rows.append(row)
+        return rows

@@ -11,7 +11,9 @@ class CSVGenerator:
         writer = csv.writer(output, delimiter=delimiter)
         writer.writerow(headers)
         writer.writerows(rows)
-        return output.getvalue().encode('utf-8')
+        file = output.getvalue().encode('utf-8')
+        output.close()
+        return file
 
     @staticmethod
     def _validate_delimiter(delimiter: str) -> None:
