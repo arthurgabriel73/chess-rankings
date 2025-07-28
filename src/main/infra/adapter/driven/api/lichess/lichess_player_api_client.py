@@ -1,6 +1,6 @@
 import concurrent
 from datetime import datetime, timedelta
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, List
 
 import requests
 
@@ -17,6 +17,7 @@ from src.main.infra.adapter.driven.api.lichess.adapter.response.get_rating_histo
 from src.main.infra.adapter.driven.api.lichess.adapter.response.get_top_players_response_adapter import (
     ListTopPlayersResponseAdapter,
 )
+from src.main.infra.adapter.driven.api.lichess.processed_player_history import ProcessedPlayerHistory
 from src.main.infra.adapter.driven.api.player_api import PlayerApi
 from src.main.infra.config.environment_settings import get_environment_variables
 
@@ -48,26 +49,28 @@ class LichessApiClient(PlayerApi):
         ).adapt()
         with concurrent.futures.ThreadPoolExecutor() as executor:
             futures = [
-                executor.submit(self._fetch_player_history, username, adapted_category, adapted_num_days)
-                for username in adapted_usernames
+                executor.submit(self._fetch_player_history, username, position, adapted_category, adapted_num_days)
+                for position, username in enumerate(adapted_usernames)
             ]
             results = [future.result() for future in concurrent.futures.as_completed(futures)]
         return ListRatingHistoriesResponseAdapter(adapted_category, results).adapt()
 
-    def _fetch_player_history(self, username: str, category: str, num_days: int) -> Dict[str, Dict[str, int]]:
+    def _fetch_player_history(
+        self, username: str, position: int, category: str, num_days: int
+    ) -> ProcessedPlayerHistory:
         url = f'{self._base_url}{self._RATING_HISTORY_ENDPOINT.format(username=username)}'
         player_raw_data = self._make_request(url)
-        return self._process_player_history(player_raw_data, category, username, num_days)
+        return self._process_player_history(player_raw_data, category, username, position, num_days)
 
     @staticmethod
     def _process_player_history(
-        data: List[Dict], category: str, username: str, num_days: int
-    ) -> Dict[str, Union[str, Dict]]:
+        data: List[Dict], category: str, username: str, position: int, num_days: int
+    ) -> ProcessedPlayerHistory:
         category_data = LichessApiClient._filter_history_by_category(data, category)
         sorted_points = LichessApiClient._extract_and_sort_points(category_data)
         date_rating_map = LichessApiClient._create_date_rating_map(sorted_points)
         last_days_ratings = LichessApiClient._generate_daily_ratings(date_rating_map, sorted_points, num_days)
-        return {'username': username, 'rating_history': last_days_ratings}
+        return {'username': username, 'rating_history': last_days_ratings, 'position': position}
 
     @staticmethod
     def _filter_history_by_category(data: List[Dict], category: str) -> Dict:
