@@ -100,7 +100,7 @@ class LichessApiClient(PlayerApi):
     ) -> Dict[str, int]:
         current_rating = sorted_points[0]['rating']
         daily_ratings: Dict[str, int] = {}
-        for i in range(num_days):
+        for i in range(num_days + 1):
             current_date_str = (datetime.today() - timedelta(days=i)).strftime('%Y-%m-%d')
             if current_date_str in date_rating_map:
                 current_rating = date_rating_map[current_date_str]
