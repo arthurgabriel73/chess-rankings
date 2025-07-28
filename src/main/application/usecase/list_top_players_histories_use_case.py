@@ -13,10 +13,8 @@ class ListTopPlayersHistoriesUseCase(ListTopPlayersHistoriesDriverPort):
         self._ui_handler = ui_handler
 
     def execute(self, query: ListTopPlayersHistoriesQuery) -> ListTopPlayersHistoriesQueryOutput:
-        category, num_players = query.category, query.num_players
+        category, num_players, num_days = query.category, query.num_players, query.num_days
         usernames = self.player_gateway.get_top_players_usernames(category, num_players)
-        rating_histories = self.player_gateway.get_players_rating_histories(
-            category=category, usernames=usernames, num_days=query.num_days
-        )
-        self._ui_handler.render_rating_histories(rating_histories)
-        return ListTopPlayersHistoriesQueryOutput(rating_histories)
+        histories = self.player_gateway.get_players_rating_histories(category, usernames, num_days)
+        self._ui_handler.render_rating_histories(histories)
+        return ListTopPlayersHistoriesQueryOutput(histories)
