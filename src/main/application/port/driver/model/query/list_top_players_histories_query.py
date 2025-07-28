@@ -30,4 +30,4 @@ class ListTopPlayersHistoriesQuery:
 
     def validate_num_days(self):
         if not isinstance(self.num_days, int) or self.num_days <= 0 or self.num_days > self._MAX_DAYS:
-            raise ValueError('Number of days must be a positive integer and cannot exceed {self._MAX_DAYS}')
+            raise ValueError(f'Number of days must be a positive integer and cannot exceed {self._MAX_DAYS}')

@@ -46,7 +46,9 @@ class TestListTopPlayersHistoriesUseCase:
             ('bullet', 0, 30, 'Number of players must be a positive integer and cannot exceed 50'),
             ('bullet', -1, 30, 'Number of players must be a positive integer and cannot exceed 50'),
             ('bullet', 51, 30, 'Number of players must be a positive integer and cannot exceed 50'),
-            ('bullet', 5, -1, 'Number of days must be a positive integer'),
+            ('bullet', 5, '-1', 'Number of days must be a positive integer and cannot exceed 90'),
+            ('bullet', 5, -1, 'Number of days must be a positive integer and cannot exceed 90'),
+            ('bullet', 5, 91, 'Number of days must be a positive integer and cannot exceed 90'),
         ],
     )
     def test_should_raise_error_when_query_is_invalid(
