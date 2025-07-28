@@ -7,7 +7,7 @@ from src.main.infra.adapter.driven.api.lichess.processed_player_history import P
 class ListRatingHistoriesResponseAdapter:
     def __init__(self, category: str, rating_histories: List[ProcessedPlayerHistory]):
         self.category = category
-        self.rating_histories = rating_histories
+        self.rating_histories = sorted(rating_histories, key=lambda x: x['position'])
 
     def adapt(self) -> List[History]:
         histories = []
