@@ -17,8 +17,10 @@ class ListTopPlayersQuery:
         if not self.category or not isinstance(self.category, str):
             raise ValueError('Invalid category')
         if len(self.category) < self._MIN_CATEGORY_LENGTH or len(self.category) > self._MAX_CATEGORY_LENGTH:
-            raise ValueError('Category must be between 3 and 100 characters long')
+            raise ValueError(
+                f'Category must be between {self._MIN_CATEGORY_LENGTH} and {self._MAX_CATEGORY_LENGTH} characters long'
+            )
 
     def validate_num_players(self):
         if not isinstance(self.num_players, int) or self.num_players <= 0 or self.num_players > self._MAX_PLAYERS:
-            raise ValueError('Number of players must be a positive integer and cannot exceed 50')
+            raise ValueError(f'Number of players must be a positive integer and cannot exceed {self._MAX_PLAYERS}')

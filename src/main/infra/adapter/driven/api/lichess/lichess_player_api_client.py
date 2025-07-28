@@ -34,10 +34,14 @@ class LichessApiClient(PlayerApi):
         return ListTopPlayersResponseAdapter(response.json()).adapt()
 
     def get_players_rating_histories(self, category: str, usernames: List[str], num_days: int) -> List[History]:
-        category, players_ids, num_days = ListRatingHistoriesRequestAdapter(category, usernames, num_days).adapt()
+        category, usernames, num_days = ListRatingHistoriesRequestAdapter(category, usernames, num_days).adapt()
 
         with concurrent.futures.ThreadPoolExecutor() as executor:
-            results = list(executor.map(self._fetch_player_history, players_ids))
+            results = list(
+                executor.map(
+                    self._fetch_player_history, usernames, [category] * len(usernames), [num_days] * len(usernames)
+                )
+            )
         return ListRatingHistoriesResponseAdapter(category, results).adapt()
 
     def _fetch_player_history(self, player_id: str, category: str, num_days: int) -> Dict[str, List[Dict[str, str]]]:
