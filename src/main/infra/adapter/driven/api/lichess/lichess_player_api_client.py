@@ -1,6 +1,6 @@
 import concurrent
 from datetime import datetime, timedelta
-from typing import Dict, List
+from typing import Any, Dict, List
 
 import requests
 
@@ -22,61 +22,88 @@ from src.main.infra.config.environment_settings import get_environment_variables
 
 
 class LichessApiClient(PlayerApi):
+    _TOP_PLAYERS_ENDPOINT = '/player/top/{num_players}/{category}'
+    _RATING_HISTORY_ENDPOINT = '/user/{username}/rating-history'
+    _FAILED_FETCH_MESSAGE = 'Failed to fetch data from Lichess API'
+
     def __init__(self, base_url: str = None):
         env = get_environment_variables()
         self._base_url = base_url or env.LICHESS_API_BASE_URL
 
-    def get_top_players_usernames(self, category: str, num_players: int) -> List[str]:
-        category, num_players = ListTopPlayersRequestAdapter(category, num_players).adapt()
-        response = requests.get(f'{self._base_url}/player/top/{num_players}/{category}')
+    def _make_request(self, url: str) -> Dict[str, Any] | List[Dict[str, Any]]:
+        response = requests.get(url)
         if response.status_code != 200:
-            raise Exception(f'Failed to fetch top players: {response.status_code} - {response.text}')
-        return ListTopPlayersResponseAdapter(response.json()).adapt()
+            raise Exception(f'{self._FAILED_FETCH_MESSAGE}: {response.status_code} - {response.text}')
+        return response.json()
+
+    def get_top_players_usernames(self, category: str, num_players: int) -> List[str]:
+        adapted_category, adapted_num_players = ListTopPlayersRequestAdapter(category, num_players).adapt()
+        url = f'{self._base_url}{self._TOP_PLAYERS_ENDPOINT.format(num_players=adapted_num_players, category=adapted_category)}'
+        response = self._make_request(url)
+        return ListTopPlayersResponseAdapter(response).adapt()
 
     def get_players_rating_histories(self, category: str, usernames: List[str], num_days: int) -> List[History]:
-        category, usernames, num_days = ListRatingHistoriesRequestAdapter(category, usernames, num_days).adapt()
-
+        adapted_category, adapted_usernames, adapted_num_days = ListRatingHistoriesRequestAdapter(
+            category, usernames, num_days
+        ).adapt()
         with concurrent.futures.ThreadPoolExecutor() as executor:
-            results = list(
-                executor.map(
-                    self._fetch_player_history, usernames, [category] * len(usernames), [num_days] * len(usernames)
-                )
-            )
-        return ListRatingHistoriesResponseAdapter(category, results).adapt()
+            futures = [
+                executor.submit(self._fetch_player_history, username, adapted_category, adapted_num_days)
+                for username in adapted_usernames
+            ]
+            results = [future.result() for future in concurrent.futures.as_completed(futures)]
+        return ListRatingHistoriesResponseAdapter(adapted_category, results).adapt()
 
-    def _fetch_player_history(self, player_id: str, category: str, num_days: int) -> Dict[str, List[Dict[str, str]]]:
-        response = requests.get(self._base_url + f'/user/{player_id}/rating-history')
-        category_history = LichessApiClient._filter_category(response.json(), category)
-        return LichessApiClient._generate_history(category_history, player_id, num_days)
-
-    @staticmethod
-    def _filter_category(data: List[Dict], category: str) -> Dict[str, str] | None:
-        return next((item for item in data if item['name'] == category), None)
+    def _fetch_player_history(self, username: str, category: str, num_days: int) -> Dict[str, List[Dict[str, str]]]:
+        url = f'{self._base_url}{self._RATING_HISTORY_ENDPOINT.format(username=username)}'
+        player_raw_data = self._make_request(url)
+        return self._process_player_history(player_raw_data, category, username, num_days)
 
     @staticmethod
-    def _generate_history(
-        category_history: Dict[str, str], player_id: str, num_days: int
+    def _process_player_history(
+        data: List[Dict], category: str, username: str, num_days: int
     ) -> Dict[str, List[Dict[str, str]]]:
+        category_data = LichessApiClient._filter_history_by_category(data, category)
+        sorted_points = LichessApiClient._extract_and_sort_points(category_data)
+        date_rating_map = LichessApiClient._create_date_rating_map(sorted_points)
+        last_days_ratings = LichessApiClient._generate_daily_ratings(date_rating_map, sorted_points, num_days)
+
+        return {username: last_days_ratings}
+
+    @staticmethod
+    def _filter_history_by_category(data: List[Dict], category: str) -> Dict:
+        return next((item for item in data if item.get('name') == category), {'points': []})
+
+    @staticmethod
+    def _extract_and_sort_points(category_data: Dict) -> List[Dict[str, Any]]:
         points = []
-        for item in category_history['points']:
+        for item in category_data.get('points', []):
             year, month, day, rating = item
             date = datetime(year, month + 1, day)
             points.append({'date': date, 'rating': rating})
-        points.sort(key=lambda item: item['date'], reverse=True)
-        reference_date = datetime.today()
-        date_rating_map = {}
-        for point in points:
-            date_str = point['date'].strftime('%Y-%m-%d')
-            date_rating_map[date_str] = point['rating']
-        last_days = []
-        current_rating = points[0]['rating']
+        points.sort(key=lambda record: record['date'], reverse=True)
+        return points
 
+    @staticmethod
+    def _create_date_rating_map(points: List[Dict[str, Any]]) -> Dict[str, int]:
+        date_rating_map = {}
+        for record in points:
+            date_str = record['date'].strftime('%Y-%m-%d')
+            date_rating_map[date_str] = record['rating']
+        return date_rating_map
+
+    @staticmethod
+    def _generate_daily_ratings(
+        date_rating_map: Dict[str, int], sorted_points: List[Dict[str, int]], num_days: int
+    ) -> List[Dict[str, str]]:
+        last_days_ratings = []
+        current_rating = sorted_points[0]['rating']
+        reference_date = datetime.today()
         for i in range(num_days):
             current_date = reference_date - timedelta(days=i)
             date_str = current_date.strftime('%Y-%m-%d')
             formatted_date = current_date.strftime('%Y-%m-%d')
             if date_str in date_rating_map:
                 current_rating = date_rating_map[date_str]
-
-            last_days.append({'date': formatted_date, 'rating': current_rating})
-        return {player_id: last_days}
+            last_days_ratings.append({'date': formatted_date, 'rating': current_rating})
+        return last_days_ratings
