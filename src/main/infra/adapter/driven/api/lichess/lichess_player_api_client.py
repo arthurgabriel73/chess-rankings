@@ -100,9 +100,8 @@ class LichessApiClient(PlayerApi):
         reference_date = datetime.today()
         for i in range(num_days):
             current_date = reference_date - timedelta(days=i)
-            date_str = current_date.strftime('%Y-%m-%d')
             formatted_date = current_date.strftime('%Y-%m-%d')
-            if date_str in date_rating_map:
-                current_rating = date_rating_map[date_str]
+            if formatted_date in date_rating_map:
+                current_rating = date_rating_map[formatted_date]
             last_days_ratings.append({'date': formatted_date, 'rating': current_rating})
         return last_days_ratings
