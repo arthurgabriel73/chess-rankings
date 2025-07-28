@@ -1,10 +1,14 @@
 from abc import ABC, abstractmethod
+from typing import List
 
-from src.main.infra.adapter.driven.api.dto.request.list_top_players_request import ListTopPlayersRequest
-from src.main.infra.adapter.driven.api.dto.response.list_top_players_response import ListTopPlayersResponse
+from src.main.domain.history import History
 
 
 class PlayerApi(ABC):
     @abstractmethod
-    def list_top_players(self, request: ListTopPlayersRequest) -> ListTopPlayersResponse:
+    def get_top_players_usernames(self, category: str, num_players: int) -> List[str]:
+        pass
+
+    @abstractmethod
+    def get_players_rating_histories(self, category: str, usernames: List[str], num_days: int) -> List[History]:
         pass

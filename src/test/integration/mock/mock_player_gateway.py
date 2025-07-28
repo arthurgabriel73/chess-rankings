@@ -2,17 +2,15 @@ from typing import List
 
 from src.main.application.port.driven.api.player_gateway import PlayerGateway
 from src.main.domain.history import History
-from src.main.domain.player import Player
-from src.main.domain.player_username import PlayerUsername
 
 
 class MockPlayerGateway(PlayerGateway):
-    def list_top_players(self, category: str, num_players: int) -> List[Player]:
+    def get_top_players_usernames(self, category: str, num_players: int) -> List[str]:
         usernames = [f'user{i}' for i in range(num_players)]
-        return [Player(username=PlayerUsername(username)) for username in usernames]
+        return usernames
 
-    def list_players_rating_histories(self, category: str, usernames: List[str], num_days: int) -> List[History]:
+    def get_players_rating_histories(self, category: str, usernames: List[str], num_days: int) -> List[History]:
         return [
             History(category=category, player_username=username, rating_history={f'{index}-07-01': index})
-            for index, username in usernames
+            for index, username in enumerate(usernames)
         ]
