@@ -4,10 +4,19 @@ from typing import Dict, List
 
 import requests
 
-from src.main.infra.adapter.driven.api.dto.request.list_rating_histories_request import ListRatingHistoriesRequest
-from src.main.infra.adapter.driven.api.dto.request.list_top_players_request import ListTopPlayersRequest
-from src.main.infra.adapter.driven.api.dto.response.list_rating_histories_response import ListRatingHistoriesResponse
-from src.main.infra.adapter.driven.api.dto.response.list_top_players_response import ListTopPlayersResponse
+from src.main.domain.history import History
+from src.main.infra.adapter.driven.api.lichess.adapter.request.get_rating_histories_request_adapter import (
+    ListRatingHistoriesRequestAdapter,
+)
+from src.main.infra.adapter.driven.api.lichess.adapter.request.get_top_players_request_adapter import (
+    ListTopPlayersRequestAdapter,
+)
+from src.main.infra.adapter.driven.api.lichess.adapter.response.get_rating_histories_response_adapter import (
+    ListRatingHistoriesResponseAdapter,
+)
+from src.main.infra.adapter.driven.api.lichess.adapter.response.get_top_players_response_adapter import (
+    ListTopPlayersResponseAdapter,
+)
 from src.main.infra.adapter.driven.api.player_api import PlayerApi
 from src.main.infra.config.environment_settings import get_environment_variables
 
@@ -17,19 +26,19 @@ class LichessApiClient(PlayerApi):
         env = get_environment_variables()
         self._base_url = base_url or env.LICHESS_API_BASE_URL
 
-    def get_top_players_usernames(self, request: ListTopPlayersRequest) -> ListTopPlayersResponse:
-        category, num_players = request.category, request.num_players
+    def get_top_players_usernames(self, category: str, num_players: int) -> List[str]:
+        category, num_players = ListTopPlayersRequestAdapter(category, num_players).adapt()
         response = requests.get(f'{self._base_url}/player/top/{num_players}/{category}')
         if response.status_code != 200:
             raise Exception(f'Failed to fetch top players: {response.status_code} - {response.text}')
-        return ListTopPlayersResponse(response.json())
+        return ListTopPlayersResponseAdapter(response.json()).adapt()
 
-    def get_players_rating_histories(self, request: ListRatingHistoriesRequest) -> ListRatingHistoriesResponse:
-        category, players_ids, num_days = request.category, request.players_ids, request.num_days
+    def get_players_rating_histories(self, category: str, usernames: List[str], num_days: int) -> List[History]:
+        category, players_ids, num_days = ListRatingHistoriesRequestAdapter(category, usernames, num_days).adapt()
 
         with concurrent.futures.ThreadPoolExecutor() as executor:
             results = list(executor.map(self._fetch_player_history, players_ids))
-        return ListRatingHistoriesResponse(category, results)
+        return ListRatingHistoriesResponseAdapter(category, results).adapt()
 
     def _fetch_player_history(self, player_id: str, category: str, num_days: int) -> Dict[str, List[Dict[str, str]]]:
         response = requests.get(self._base_url + f'/user/{player_id}/rating-history')

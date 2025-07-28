@@ -3,7 +3,7 @@ from typing import Dict, List
 
 
 @dataclass
-class ListTopPlayersResponse:
+class ListTopPlayersResponseAdapter:
     response: Dict
 
     def adapt(self) -> List[str]:
