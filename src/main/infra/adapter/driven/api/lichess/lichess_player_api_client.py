@@ -95,13 +95,11 @@ class LichessApiClient(PlayerApi):
     def _generate_daily_ratings(
         date_rating_map: Dict[str, int], sorted_points: List[Dict[str, int]], num_days: int
     ) -> List[Dict[str, str]]:
-        last_days_ratings = []
         current_rating = sorted_points[0]['rating']
-        reference_date = datetime.today()
+        last_days_ratings = []
         for i in range(num_days):
-            current_date = reference_date - timedelta(days=i)
-            formatted_date = current_date.strftime('%Y-%m-%d')
-            if formatted_date in date_rating_map:
-                current_rating = date_rating_map[formatted_date]
-            last_days_ratings.append({'date': formatted_date, 'rating': current_rating})
+            current_date_str = (datetime.today() - timedelta(days=i)).strftime('%Y-%m-%d')
+            if current_date_str in date_rating_map:
+                current_rating = date_rating_map[current_date_str]
+            last_days_ratings.append({'date': current_date_str, 'rating': current_rating})
         return last_days_ratings
