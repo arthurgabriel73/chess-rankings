@@ -67,7 +67,6 @@ class LichessApiClient(PlayerApi):
         sorted_points = LichessApiClient._extract_and_sort_points(category_data)
         date_rating_map = LichessApiClient._create_date_rating_map(sorted_points)
         last_days_ratings = LichessApiClient._generate_daily_ratings(date_rating_map, sorted_points, num_days)
-
         return {username: last_days_ratings}
 
     @staticmethod
