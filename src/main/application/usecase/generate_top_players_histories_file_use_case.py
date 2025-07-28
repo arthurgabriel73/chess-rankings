@@ -1,6 +1,7 @@
 from typing import List
 
 from src.main.application.port.driven.api.player_gateway import PlayerGateway
+from src.main.application.port.driven.file.file_generator_service import FileGeneratorService
 from src.main.application.port.driven.file.file_storage_service import FileStorageService
 from src.main.application.port.driver.generate_top_players_histories_file_driver_port import (
     GenerateTopPlayersHistoriesFileDriverPort,
@@ -15,9 +16,15 @@ from src.main.domain.history import History
 
 
 class GenerateTopPlayersHistoriesFileUseCase(GenerateTopPlayersHistoriesFileDriverPort):
-    def __init__(self, player_gateway: PlayerGateway, file_storage_service: FileStorageService):
+    def __init__(
+        self,
+        player_gateway: PlayerGateway,
+        file_storage_service: FileStorageService,
+        file_generator_service: FileGeneratorService,
+    ):
         self._player_gateway = player_gateway
         self._file_storage_service = file_storage_service
+        self._file_generator_service = file_generator_service
 
     def execute(self, command: GenerateTopPlayersHistoriesFileCommand) -> GenerateTopPlayersHistoriesFileCommandOutput:
         category, num_players, num_days = command.category, command.num_players, command.num_days
@@ -31,7 +38,7 @@ class GenerateTopPlayersHistoriesFileUseCase(GenerateTopPlayersHistoriesFileDriv
         return GenerateTopPlayersHistoriesFileCommandOutput(success=True, file_url=file_url, download_url=download_url)
 
     def _generate_histories_file(self, histories: List[History]) -> bytes:
-        pass
+        return self._file_generator_service.generate_history_file(histories)
 
     def _generate_file_key(self, category: str, num_players: int, num_days: int) -> str:
         pass
