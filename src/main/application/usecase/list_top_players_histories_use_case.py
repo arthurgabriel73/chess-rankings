@@ -12,13 +12,13 @@ from src.main.domain.history import History
 
 class ListTopPlayersHistoriesUseCase(ListTopPlayersHistoriesDriverPort):
     def __init__(self, player_gateway: PlayerGateway, ui_handler: UIHandler):
-        self.player_gateway = player_gateway
+        self._player_gateway = player_gateway
         self._ui_handler = ui_handler
 
     def execute(self, query: ListTopPlayersHistoriesQuery) -> ListTopPlayersHistoriesQueryOutput:
         category, num_players, num_days = query.category, query.num_players, query.num_days
-        usernames = self.player_gateway.get_top_players_usernames(category, num_players)
-        histories = self.player_gateway.get_players_rating_histories(category, usernames, num_days)
+        usernames = self._player_gateway.get_top_players_usernames(category, num_players)
+        histories = self._player_gateway.get_players_rating_histories(category, usernames, num_days)
         self._render_top_player_rating_history(histories)
         return ListTopPlayersHistoriesQueryOutput(histories)
 
