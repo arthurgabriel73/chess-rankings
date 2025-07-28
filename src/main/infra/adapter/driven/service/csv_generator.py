@@ -1,0 +1,2 @@
+class CSVGenerator:
+    pass
