@@ -1,0 +1,2 @@
+class GenerateTopPlayersHistoriesFileCommandOutput:
+    pass
