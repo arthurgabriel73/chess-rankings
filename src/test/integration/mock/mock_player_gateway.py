@@ -12,5 +12,5 @@ class MockPlayerGateway(PlayerGateway):
     def get_players_rating_histories(self, category: str, usernames: List[str], num_days: int) -> List[History]:
         return [
             History(category=category, player_username=username, rating_history={f'{index}-07-01': index})
-            for index, username in usernames
+            for index, username in enumerate(usernames)
         ]
