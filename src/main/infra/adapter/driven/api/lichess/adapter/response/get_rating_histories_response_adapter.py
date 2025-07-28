@@ -1,17 +1,15 @@
-from typing import Dict, List
+from typing import Dict, List, Union
 
 from src.main.domain.history import History
 
 
 class ListRatingHistoriesResponseAdapter:
-    def __init__(self, category: str, players_histories: List[Dict[str, Dict[str, int]]]):
+    def __init__(self, category: str, rating_histories: List[Dict[str, Union[str, Dict]]]):
         self.category = category
-        self.players_histories = players_histories
+        self.rating_histories = rating_histories
 
     def adapt(self) -> List[History]:
         histories = []
-        for player_history in self.players_histories:
-            username = next(iter(player_history))
-            rating_history = player_history[username]
-            histories.append(History(category=self.category, player_username=username, rating_history=rating_history))
+        for item in self.rating_histories:
+            histories.append(History(self.category, item['username'], item['rating_history']))
         return histories

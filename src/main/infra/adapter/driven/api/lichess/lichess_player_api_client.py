@@ -1,6 +1,6 @@
 import concurrent
 from datetime import datetime, timedelta
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Union
 
 import requests
 
@@ -54,7 +54,7 @@ class LichessApiClient(PlayerApi):
             results = [future.result() for future in concurrent.futures.as_completed(futures)]
         return ListRatingHistoriesResponseAdapter(adapted_category, results).adapt()
 
-    def _fetch_player_history(self, username: str, category: str, num_days: int) -> Dict[str, List[Dict[str, str]]]:
+    def _fetch_player_history(self, username: str, category: str, num_days: int) -> Dict[str, Dict[str, int]]:
         url = f'{self._base_url}{self._RATING_HISTORY_ENDPOINT.format(username=username)}'
         player_raw_data = self._make_request(url)
         return self._process_player_history(player_raw_data, category, username, num_days)
@@ -62,12 +62,12 @@ class LichessApiClient(PlayerApi):
     @staticmethod
     def _process_player_history(
         data: List[Dict], category: str, username: str, num_days: int
-    ) -> Dict[str, List[Dict[str, str]]]:
+    ) -> Dict[str, Union[str, Dict]]:
         category_data = LichessApiClient._filter_history_by_category(data, category)
         sorted_points = LichessApiClient._extract_and_sort_points(category_data)
         date_rating_map = LichessApiClient._create_date_rating_map(sorted_points)
         last_days_ratings = LichessApiClient._generate_daily_ratings(date_rating_map, sorted_points, num_days)
-        return {username: last_days_ratings}
+        return {'username': username, 'rating_history': last_days_ratings}
 
     @staticmethod
     def _filter_history_by_category(data: List[Dict], category: str) -> Dict:
@@ -94,12 +94,13 @@ class LichessApiClient(PlayerApi):
     @staticmethod
     def _generate_daily_ratings(
         date_rating_map: Dict[str, int], sorted_points: List[Dict[str, int]], num_days: int
-    ) -> List[Dict[str, str]]:
+    ) -> Dict[str, int]:
         current_rating = sorted_points[0]['rating']
-        last_days_ratings = []
+        daily_ratings: Dict[str, int] = {}
         for i in range(num_days):
             current_date_str = (datetime.today() - timedelta(days=i)).strftime('%Y-%m-%d')
             if current_date_str in date_rating_map:
                 current_rating = date_rating_map[current_date_str]
-            last_days_ratings.append({'date': current_date_str, 'rating': current_rating})
-        return last_days_ratings
+            daily_ratings[current_date_str] = current_rating
+        sorted_daily_ratings = {date: daily_ratings[date] for date in sorted(daily_ratings.keys(), reverse=True)}
+        return sorted_daily_ratings
