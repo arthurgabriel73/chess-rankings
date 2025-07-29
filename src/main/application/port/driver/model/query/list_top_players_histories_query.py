@@ -7,7 +7,7 @@ class ListTopPlayersHistoriesQuery:
     num_players: int
     num_days: int
     _MAX_PLAYERS: int = 50
-    _MAX_DAYS: int = 90
+    _MAX_DAYS: int = 30
     _MIN_CATEGORY_LENGTH = 3
     _MAX_CATEGORY_LENGTH: int = 100
 
