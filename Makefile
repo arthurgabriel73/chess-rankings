@@ -69,7 +69,13 @@ setup-redis:
 
 setup-app:
 	@echo "\033[0;36mStarting the application...\033[0m"
-	docker-compose up -d app --build
+	docker-compose up app --build
 	@echo "\033[0;32mApplication started successfully!\033[0m"
 
-setup: setup-localstack setup-redis setup-app
+
+up: setup-localstack setup-redis setup-app
+
+down:
+	@echo "\033[0;36mStopping all services...\033[0m"
+	docker-compose down
+	@echo "\033[0;32mAll services stopped successfully!\033[0m"
