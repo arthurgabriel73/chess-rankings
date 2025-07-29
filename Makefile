@@ -31,7 +31,6 @@ integration:
 
 e2e: setup-localstack setup-redis
 	@echo "\033[0;36mRunning e2e tests...\033[0m"
-	export ENV=test
 	export PYTHONPATH=$(pwd)
 	poetry run coverage run --source=./ -m behave
 	poetry run coverage report --fail-under=80
