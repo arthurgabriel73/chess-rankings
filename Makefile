@@ -29,6 +29,15 @@ integration:
 	poetry run coverage html
 	@echo "\033[0;32mIntegration tests completed successfully!\033[0m"
 
+e2e: setup-localstack setup-redis
+	@echo "\033[0;36mRunning e2e tests...\033[0m"
+	export ENV=test
+	export PYTHONPATH=$(pwd)
+	poetry run coverage run --source=./ -m behave
+	poetry run coverage report --fail-under=80
+	poetry run coverage html
+	@echo "\033[0;32me2e tests completed successfully!\033[0m"
+
 setup-localstack:
 	@echo "\033[0;36mInitializing LocalStack...\033[0m"
 	export AWS_ACCESS_KEY_ID=local-access-key-id
