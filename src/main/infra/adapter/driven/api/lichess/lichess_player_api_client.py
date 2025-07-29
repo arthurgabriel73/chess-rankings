@@ -34,7 +34,7 @@ class LichessApiClient(PlayerApi):
 
     def _make_request(self, url: str) -> Dict[str, Any] | List[Dict[str, Any]]:
         response = requests.get(url)
-        if response.status_code != 202:
+        if response.status_code != 200:
             raise FailedDependencyException(f'{self._FAILED_FETCH_MESSAGE}: {response.status_code}')
         return response.json()
 
