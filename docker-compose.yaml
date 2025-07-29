@@ -28,8 +28,6 @@ services:
 
   app:
     build: .
-    env_file:
-      - .env.local
     depends_on:
       - localstack
       - redis

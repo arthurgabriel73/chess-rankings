@@ -13,11 +13,10 @@ RUN pip install --upgrade pip \
 WORKDIR /app
 
 # Copy only the necessary files for Poetry to install dependencies
-COPY pyproject.toml poetry.lock* /app/
+COPY pyproject.toml poetry.lock ./
 
-# Install dependencies (no virtualenvs)
-RUN poetry config virtualenvs.create false \
-    && poetry install --no-interaction --no-ansi --no-root
+# Install dependencies
+RUN poetry install --without dev
 
 COPY . /app
 
