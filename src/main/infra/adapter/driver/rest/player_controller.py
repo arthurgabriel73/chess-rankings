@@ -31,7 +31,7 @@ def list_top_players_rating_histories(category: str, num_players: int, num_days:
 
 
 @players_router.post('/top/rating-history/{category}/{num_players}/generate-file', status_code=201)
-def generate_top_players_histories_file(category: str, num_players: int, num_days: int):
+def generate_top_players_histories_file(category: str, num_players: int, num_days: int, file_extension: str = 'csv'):
     driver = generate_top_players_histories_file_driver_factory()
-    command = GenerateTopPlayersHistoriesFileCommand(category, num_players, num_days)
+    command = GenerateTopPlayersHistoriesFileCommand(category, num_players, num_days, file_extension)
     return driver.execute(command)
