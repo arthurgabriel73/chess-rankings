@@ -19,6 +19,7 @@ from src.main.infra.adapter.driven.api.lichess.adapter.response.get_top_players_
 )
 from src.main.infra.adapter.driven.api.lichess.processed_player_history import ProcessedPlayerHistory
 from src.main.infra.adapter.driven.api.player_api import PlayerApi
+from src.main.infra.config.database.redis_config import RedisConfig
 from src.main.infra.config.environment_settings import get_environment_variables
 from src.main.infra.config.exception.failed_dependency_exception import FailedDependencyException
 
@@ -28,9 +29,10 @@ class LichessApiClient(PlayerApi):
     _RATING_HISTORY_ENDPOINT = '/user/{username}/rating-history'
     _FAILED_FETCH_MESSAGE = 'Failed to fetch data from Lichess API'
 
-    def __init__(self, base_url: str = None):
+    def __init__(self, base_url: str = None, redis_client=RedisConfig.get_redis_client()):
         env = get_environment_variables()
         self._base_url = base_url or env.LICHESS_API_BASE_URL
+        self._redis_client = redis_client
 
     def _make_request(self, url: str) -> Dict[str, Any] | List[Dict[str, Any]]:
         response = requests.get(url)
