@@ -13,3 +13,4 @@ class TestGetEnvironmentVariables:
         assert env.AWS_USER_KEY_ID == 'my-aws-user-key-id'
         assert env.AWS_USER_ACCESS_KEY == 'my-aws-user-access-key'
         assert env.AWS_REGION == 'us-west-2'
+        assert env.AWS_ENDPOINT_URL == 'http://localhost:4566'

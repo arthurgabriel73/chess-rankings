@@ -22,6 +22,7 @@ class AwsS3Service(StorageService):
                 aws_access_key_id=env.AWS_USER_KEY_ID,
                 aws_secret_access_key=env.AWS_USER_ACCESS_KEY,
                 region_name=env.AWS_REGION,
+                endpoint_url=env.AWS_ENDPOINT_URL,
             )
         return self._s3_client
 

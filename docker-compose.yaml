@@ -1,0 +1,15 @@
+version: '3.9'
+
+services:
+  localstack:
+    image: localstack/localstack:latest
+    environment:
+      - AWS_DEFAULT_REGION=us-east-1
+      - GATEWAY_LISTEN=4566
+      - SERVICES=s3
+      - AWS_ACCESS_KEY_ID=local-access-key-id
+      - AWS_SECRET_ACCESS_KEY=local-secret-access-key
+    ports:
+      - '4566-4583:4566-4583'
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
