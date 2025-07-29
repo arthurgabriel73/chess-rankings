@@ -29,7 +29,7 @@ integration:
 	poetry run coverage html
 	@echo "\033[0;32mIntegration tests completed successfully!\033[0m"
 
-e2e: setup-localstack setup-redis setup-mock-server
+e2e: setup-localstack setup-redis setup-mock-chess-api
 	@echo "\033[0;36mRunning e2e tests...\033[0m"
 	poetry run coverage run --source=./ -m behave || (echo "\033[0;31mTests failed!\033[0m" && docker-compose down && exit 1)
 	poetry run coverage report --fail-under=80
@@ -37,9 +37,13 @@ e2e: setup-localstack setup-redis setup-mock-server
 	@echo "\033[0;32me2e tests completed successfully!\033[0m"
 	docker-compose down
 
-setup-mock-server:
+setup-mock-chess-api:
 	@echo "\033[0;36mSetting up mock server...\033[0m"
-	python src/test/resources/mock_api.py &
+	docker-compose up -d mock-chess-api
+
+teardown-mock-chess-api:
+	@echo "\033[0;36mTearing down mock server...\033[0m"
+	docker-compose down mock-chess-api || true
 
 e2e-cleanup:
 	@echo "\033[0;36mCleaning up containers...\033[0m"

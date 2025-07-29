@@ -15,6 +15,5 @@ def step_impl(context):
 @then('the response should contain a list of top players usernames for that category')
 def step_impl(context):
     response_data = context.response.json()
-    print(response_data)
     assert isinstance(response_data, dict)
     assert len(response_data['usernames']) == 50

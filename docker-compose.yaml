@@ -37,6 +37,13 @@ services:
     env_file:
       - .env.local
 
+  mock-chess-api:
+    build:
+      context: .
+      dockerfile: src/test/resources/mock_api.Dockerfile
+    ports:
+      - "9000:9000"
+
 
 volumes:
   redis_data:
