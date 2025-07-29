@@ -1,9 +1,9 @@
 from behave import given, then, when
 
 
-@given('I have a valid request to view top players for a specific category')
-def step_impl(context):
-    context.request_url = '/players/top/classical/50'
+@given('I have a request to view the top "{num_players}" players for the "{category}" category')
+def step_impl(context, num_players: int, category: str):
+    context.request_url = f'/players/top/{category}/{num_players}'
     context.headers = {'Content-Type': 'application/json'}
 
 
