@@ -1,5 +1,7 @@
 from dataclasses import dataclass
 
+from src.main.application.port.driver.model.category_validator import CategoryValidator
+
 
 @dataclass
 class GenerateTopPlayersHistoriesFileCommand:
@@ -19,12 +21,7 @@ class GenerateTopPlayersHistoriesFileCommand:
         self._validate_file_extension()
 
     def _validate_category(self):
-        if not self.category or not isinstance(self.category, str):
-            raise ValueError('Invalid category')
-        if len(self.category) < self._MIN_CATEGORY_LENGTH or len(self.category) > self._MAX_CATEGORY_LENGTH:
-            raise ValueError(
-                f'Category must be between {self._MIN_CATEGORY_LENGTH} and {self._MAX_CATEGORY_LENGTH} characters long'
-            )
+        CategoryValidator.validate_category(self.category)
 
     def _validate_num_players(self):
         if not isinstance(self.num_players, int) or self.num_players <= 0 or self.num_players > self._MAX_PLAYERS:
