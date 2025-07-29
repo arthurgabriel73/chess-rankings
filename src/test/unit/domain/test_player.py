@@ -33,7 +33,7 @@ class TestPlayer:
 
     def test_should_raise_error_when_username_is_not_string(self):
         # Act & Assert
-        with pytest.raises(TypeError, match='Username must be a string'):
+        with pytest.raises(ValueError, match='Username must be a string'):
             PlayerUsername(12345)
 
     def test_should_raise_error_when_username_is_null(self):

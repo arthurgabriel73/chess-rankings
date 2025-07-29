@@ -20,6 +20,7 @@ from src.main.infra.adapter.driven.api.lichess.adapter.response.get_top_players_
 from src.main.infra.adapter.driven.api.lichess.processed_player_history import ProcessedPlayerHistory
 from src.main.infra.adapter.driven.api.player_api import PlayerApi
 from src.main.infra.config.environment_settings import get_environment_variables
+from src.main.infra.config.exception.failed_dependency_exception import FailedDependencyException
 
 
 class LichessApiClient(PlayerApi):
@@ -34,7 +35,7 @@ class LichessApiClient(PlayerApi):
     def _make_request(self, url: str) -> Dict[str, Any] | List[Dict[str, Any]]:
         response = requests.get(url)
         if response.status_code != 200:
-            raise Exception(f'{self._FAILED_FETCH_MESSAGE}: {response.status_code} - {response.text}')
+            raise FailedDependencyException(f'{self._FAILED_FETCH_MESSAGE}: {response.status_code}')
         return response.json()
 
     def get_top_players_usernames(self, category: str, num_players: int) -> List[str]:
