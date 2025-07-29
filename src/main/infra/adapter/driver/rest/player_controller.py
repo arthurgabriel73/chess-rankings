@@ -5,6 +5,9 @@ from src.main.application.port.driver.model.command.generate_top_players_histori
 )
 from src.main.application.port.driver.model.query.list_top_players_histories_query import ListTopPlayersHistoriesQuery
 from src.main.application.port.driver.model.query.list_top_players_query import ListTopPlayersQuery
+from src.main.infra.adapter.driver.rest.docs.generate_top_players_histories_file_response_model import (
+    GenerateTopPlayersHistoriesFileResponseModel,
+)
 from src.main.infra.adapter.driver.rest.docs.list_top_players_rating_history_response_model import (
     ListTopPlayersRatingHistoryResponseModel,
 )
@@ -38,7 +41,11 @@ def list_top_players_rating_histories(category: str, num_players: int, num_days:
     return driver.execute(query)
 
 
-@players_router.post('/top/rating-history/{category}/{num_players}/generate-file', status_code=201)
+@players_router.post(
+    '/top/rating-history/{category}/{num_players}/generate-file',
+    status_code=201,
+    response_model=GenerateTopPlayersHistoriesFileResponseModel,
+)
 def generate_top_players_histories_file(
     category: str, num_players: int, num_days: int = 30, file_extension: str = 'csv'
 ):
