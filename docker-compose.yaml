@@ -26,5 +26,16 @@ services:
       timeout: 3s
       retries: 30
 
+  app:
+    build: .
+    env_file:
+      - .env.local
+    depends_on:
+      - localstack
+      - redis
+    ports:
+      - '8000:8000'
+
+
 volumes:
   redis_data:

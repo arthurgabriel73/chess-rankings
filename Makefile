@@ -36,3 +36,13 @@ setup-localstack:
 	sleep 5
 	curl -s -X PUT http://localhost:4566/chess-rankings-local
 	@echo "\033[0;32mLocalStack initialized with S3 bucket!\033[0m"
+
+setup-redis:
+	@echo "\033[0;36mSetting up Redis...\033[0m"
+	docker-compose up -d redis
+	@echo "\033[0;32mRedis setup completed!\033[0m"
+
+app: setup-localstack setup-redis
+	@echo "\033[0;36mStarting the application...\033[0m"
+	docker-compose up app
+	@echo "\033[0;32mApplication started successfully!\033[0m"
