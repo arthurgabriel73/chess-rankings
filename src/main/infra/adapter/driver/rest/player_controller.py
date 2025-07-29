@@ -24,7 +24,7 @@ def list_top_players(category: str, num_players: int):
 
 
 @players_router.get('/top/rating-history/{category}/{num_players}', status_code=200)
-def list_top_players_rating_histories(category: str, num_players: int, num_days: int):
+def list_top_players_rating_histories(category: str, num_players: int, num_days: int = 30):
     driver = list_top_players_histories_driver_factory()
     query = ListTopPlayersHistoriesQuery(category, num_players, num_days)
     return driver.execute(query)
