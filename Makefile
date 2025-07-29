@@ -3,15 +3,17 @@ include .env.local
 
 .PHONY: build up down clean remove-image logs
 
-export ENV=test
 export PYTHONPATH=$(pwd)
+export ENV=test
 
 test:
+	@echo "\033[0;36mRunning all tests...\033[0m"
 	poetry run coverage run -m pytest -v src/test/unit
 	poetry run coverage run -m pytest -v src/test/integration
 	poetry run coverage combine
 	poetry run coverage report --fail-under=80
 	poetry run coverage html
+	@echo "\033[0;32mAll tests completed successfully!\033[0m"
 
 unit:
 	@echo "\033[0;36mRunning unit tests...\033[0m"
@@ -36,3 +38,15 @@ setup-localstack:
 	sleep 5
 	curl -s -X PUT http://localhost:4566/chess-rankings-local
 	@echo "\033[0;32mLocalStack initialized with S3 bucket!\033[0m"
+
+setup-redis:
+	@echo "\033[0;36mSetting up Redis...\033[0m"
+	docker-compose up -d redis
+	@echo "\033[0;32mRedis setup completed!\033[0m"
+
+setup-app:
+	@echo "\033[0;36mStarting the application...\033[0m"
+	docker-compose up -d app --build
+	@echo "\033[0;32mApplication started successfully!\033[0m"
+
+setup: setup-localstack setup-redis setup-app

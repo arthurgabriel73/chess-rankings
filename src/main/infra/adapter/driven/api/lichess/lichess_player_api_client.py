@@ -1,4 +1,5 @@
 import concurrent
+import json
 from datetime import datetime, timedelta
 from typing import Any, Dict, List
 
@@ -19,6 +20,7 @@ from src.main.infra.adapter.driven.api.lichess.adapter.response.get_top_players_
 )
 from src.main.infra.adapter.driven.api.lichess.processed_player_history import ProcessedPlayerHistory
 from src.main.infra.adapter.driven.api.player_api import PlayerApi
+from src.main.infra.config.database.redis_config import RedisConfig
 from src.main.infra.config.environment_settings import get_environment_variables
 from src.main.infra.config.exception.failed_dependency_exception import FailedDependencyException
 
@@ -27,16 +29,23 @@ class LichessApiClient(PlayerApi):
     _TOP_PLAYERS_ENDPOINT = '/player/top/{num_players}/{category}'
     _RATING_HISTORY_ENDPOINT = '/user/{username}/rating-history'
     _FAILED_FETCH_MESSAGE = 'Failed to fetch data from Lichess API'
+    _CACHE_TTL_SECONDS = 30
 
-    def __init__(self, base_url: str = None):
+    def __init__(self, base_url: str = None, redis_client=RedisConfig.get_redis_client()):
         env = get_environment_variables()
         self._base_url = base_url or env.LICHESS_API_BASE_URL
+        self._redis_client = redis_client
 
     def _make_request(self, url: str) -> Dict[str, Any] | List[Dict[str, Any]]:
+        cached = self._redis_client.get(url)
+        if cached:
+            return json.loads(cached)
         response = requests.get(url)
         if response.status_code != 200:
             raise FailedDependencyException(f'{self._FAILED_FETCH_MESSAGE}: {response.status_code}')
-        return response.json()
+        data = response.json()
+        self._redis_client.setex(url, self._CACHE_TTL_SECONDS, json.dumps(data))
+        return data
 
     def get_top_players_usernames(self, category: str, num_players: int) -> List[str]:
         adapted_category, adapted_num_players = ListTopPlayersRequestAdapter(category, num_players).adapt()
