@@ -28,6 +28,7 @@ class LichessApiClient(PlayerApi):
     _TOP_PLAYERS_ENDPOINT = '/player/top/{num_players}/{category}'
     _RATING_HISTORY_ENDPOINT = '/user/{username}/rating-history'
     _FAILED_FETCH_MESSAGE = 'Failed to fetch data from Lichess API'
+    _CACHE_TTL_SECONDS = 30
 
     def __init__(self, base_url: str = None, redis_client=RedisConfig.get_redis_client()):
         env = get_environment_variables()
