@@ -35,15 +35,18 @@ e2e: setup-localstack setup-redis setup-mock-chess-api
 	poetry run coverage report --fail-under=80
 	poetry run coverage html
 	@echo "\033[0;32me2e tests completed successfully!\033[0m"
+	make teardown-mock-chess-api
 	docker-compose down
 
 setup-mock-chess-api:
 	@echo "\033[0;36mSetting up mock server...\033[0m"
-	docker-compose up -d mock-chess-api
+	docker build -f src/test/resources/mock_api.Dockerfile -t mock_chess_api_service .
+	docker run -d --name mock-chess-api -p 9000:9000 mock_chess_api_service
 
 teardown-mock-chess-api:
 	@echo "\033[0;36mTearing down mock server...\033[0m"
-	docker-compose down mock-chess-api || true
+	docker stop mock-chess-api || true
+	docker rm mock-chess-api || true
 
 e2e-cleanup:
 	@echo "\033[0;36mCleaning up containers...\033[0m"
