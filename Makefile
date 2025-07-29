@@ -7,6 +7,7 @@ include .env.local
 
 test:
 	@echo "\033[0;36mRunning all tests...\033[0m"
+	export ENV=test
 	poetry run coverage run -m pytest -v src/test/unit
 	poetry run coverage run -m pytest -v src/test/integration
 	poetry run coverage combine
@@ -16,6 +17,7 @@ test:
 
 unit:
 	@echo "\033[0;36mRunning unit tests...\033[0m"
+	export ENV=test
 	poetry run coverage run -m pytest -v src/test/unit
 	poetry run coverage report --fail-under=80
 	poetry run coverage html
@@ -23,6 +25,7 @@ unit:
 
 integration:
 	@echo "\033[0;36mRunning integration tests...\033[0m"
+	export ENV=test
 	poetry run coverage run -m pytest -v src/test/integration
 	poetry run coverage report --fail-under=80
 	poetry run coverage html
@@ -43,7 +46,9 @@ setup-redis:
 	docker-compose up -d redis
 	@echo "\033[0;32mRedis setup completed!\033[0m"
 
-app: setup-localstack setup-redis
+setup-app:
 	@echo "\033[0;36mStarting the application...\033[0m"
-	docker-compose up app
+	docker-compose up -d app --build
 	@echo "\033[0;32mApplication started successfully!\033[0m"
+
+setup: setup-localstack setup-redis setup-app

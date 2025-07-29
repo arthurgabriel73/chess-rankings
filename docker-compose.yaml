@@ -28,11 +28,14 @@ services:
 
   app:
     build: .
+    command: sh -c "poetry run python src/main/main.py"
     depends_on:
       - localstack
       - redis
     ports:
-      - '8000:8000'
+      - "3000:3000"
+    env_file:
+      - .env.local
 
 
 volumes:
