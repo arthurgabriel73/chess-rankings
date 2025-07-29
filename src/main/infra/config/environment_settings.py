@@ -22,6 +22,7 @@ class EnvironmentSettings(BaseSettings):
     AWS_USER_ACCESS_KEY: Optional[str] = Field(validation_alias='AWS_USER_ACCESS_KEY_VALUE') or 'my-aws-user-access-key'
     AWS_REGION: Optional[str] = Field(validation_alias='AWS_REGION_VALUE') or 'us-west-2'
     AWS_ENDPOINT_URL: Optional[str] = Field(validation_alias='AWS_ENDPOINT_URL_VALUE') or 'http://localhost:4566'
+    REDIS_URL: Optional[str] = Field(validation_alias='REDIS_URL_VALUE') or 'redis://localhost:6379'
     model_config = SettingsConfigDict(
         env_file=get_env_filename(), env_ignore_empty=True, populate_by_name=True, extra='allow'
     )
