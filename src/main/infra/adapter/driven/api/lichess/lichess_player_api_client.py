@@ -1,4 +1,5 @@
 import concurrent
+import json
 from datetime import datetime, timedelta
 from typing import Any, Dict, List
 
@@ -36,10 +37,15 @@ class LichessApiClient(PlayerApi):
         self._redis_client = redis_client
 
     def _make_request(self, url: str) -> Dict[str, Any] | List[Dict[str, Any]]:
+        cached = self._redis_client.get(url)
+        if cached:
+            return json.loads(cached)
         response = requests.get(url)
         if response.status_code != 200:
             raise FailedDependencyException(f'{self._FAILED_FETCH_MESSAGE}: {response.status_code}')
-        return response.json()
+        data = response.json()
+        self._redis_client.setex(url, self._CACHE_TTL_SECONDS, json.dumps(data))
+        return data
 
     def get_top_players_usernames(self, category: str, num_players: int) -> List[str]:
         adapted_category, adapted_num_players = ListTopPlayersRequestAdapter(category, num_players).adapt()
