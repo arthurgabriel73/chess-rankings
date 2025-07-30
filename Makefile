@@ -40,6 +40,7 @@ e2e: setup-localstack setup-redis setup-mock-chess-api
 
 setup-mock-chess-api:
 	@echo "\033[0;36mSetting up mock server...\033[0m"
+	docker rm -f mock-chess-api || true
 	docker build -f src/test/resources/mock_api.Dockerfile -t mock_chess_api_service .
 	docker run -d --name mock-chess-api -p 9000:9000 mock_chess_api_service
 
