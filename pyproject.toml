@@ -18,6 +18,9 @@ pydantic = "^2.11.7"
 pydantic-settings = "^2.10.1"
 boto3 = "^1.39.15"
 redis = "^6.2.0"
+uvicorn-worker = "^0.3.0"
+
+
 
 
 
@@ -30,3 +33,6 @@ build-backend = "poetry.core.masonry.api"
 pytest = "^8.4.1"
 coverage = "^7.9.1"
 ruff = "^0.12.5"
+behave = "^1.2.6"
+httpx = "^0.28.1" # only used for e2e testing
+pandas = "^2.3.1" # only used for e2e testing

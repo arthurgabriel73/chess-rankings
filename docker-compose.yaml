@@ -2,7 +2,10 @@ version: '3.9'
 
 services:
   localstack:
+    container_name: localstack-localhost
     image: localstack/localstack:latest
+    networks:
+      - chess-rankings
     environment:
       - AWS_DEFAULT_REGION=us-east-1
       - GATEWAY_LISTEN=4566
@@ -15,7 +18,10 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock"
 
   redis:
+    container_name: redis-localhost
     image: redis:latest
+    networks:
+      - chess-rankings
     ports:
       - '6379:6379'
     volumes:
@@ -27,11 +33,14 @@ services:
       retries: 30
 
   app:
+    container_name: chess-rankings-app
     build: .
     command: sh -c "poetry run python src/main/main.py"
     depends_on:
       - localstack
       - redis
+    networks:
+      - chess-rankings
     ports:
       - "3000:3000"
     env_file:
@@ -40,3 +49,7 @@ services:
 
 volumes:
   redis_data:
+
+networks:
+  chess-rankings:
+    driver: bridge

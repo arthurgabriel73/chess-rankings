@@ -29,6 +29,30 @@ integration:
 	poetry run coverage html
 	@echo "\033[0;32mIntegration tests completed successfully!\033[0m"
 
+e2e: setup-localstack setup-redis setup-mock-chess-api
+	@echo "\033[0;36mRunning e2e tests...\033[0m"
+	poetry run coverage run --source=./ -m behave || (echo "\033[0;31mTests failed!\033[0m" && docker-compose down && exit 1)
+	poetry run coverage report --fail-under=80
+	poetry run coverage html
+	@echo "\033[0;32me2e tests completed successfully!\033[0m"
+	make teardown-mock-chess-api
+	docker-compose down
+
+setup-mock-chess-api:
+	@echo "\033[0;36mSetting up mock server...\033[0m"
+	docker rm -f mock-chess-api || true
+	docker build -f src/test/resources/mock_api.Dockerfile -t mock_chess_api_service .
+	docker run -d --name mock-chess-api -p 9000:9000 mock_chess_api_service
+
+teardown-mock-chess-api:
+	@echo "\033[0;36mTearing down mock server...\033[0m"
+	docker stop mock-chess-api || true
+	docker rm mock-chess-api || true
+
+e2e-cleanup:
+	@echo "\033[0;36mCleaning up containers...\033[0m"
+	docker-compose down
+
 setup-localstack:
 	@echo "\033[0;36mInitializing LocalStack...\033[0m"
 	export AWS_ACCESS_KEY_ID=local-access-key-id
@@ -46,7 +70,13 @@ setup-redis:
 
 setup-app:
 	@echo "\033[0;36mStarting the application...\033[0m"
-	docker-compose up -d app --build
+	docker-compose up app --build
 	@echo "\033[0;32mApplication started successfully!\033[0m"
 
-setup: setup-localstack setup-redis setup-app
+
+up: setup-localstack setup-redis setup-app
+
+down:
+	@echo "\033[0;36mStopping all services...\033[0m"
+	docker-compose down
+	@echo "\033[0;32mAll services stopped successfully!\033[0m"
