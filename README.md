@@ -8,7 +8,9 @@
 
 #### I explained and tested the project in a video. You can watch it to understand the implementation details and see the project in action.
 
-[![Watch the video](src/docs/img.png)](https://www.youtube.com/watch?v=1234567890)
+###### Click in the image below to watch the video on YouTube.
+
+[![Watch the video](https://img.youtube.com/vi/TGJHOECVvG4/maxresdefault.jpg)](https://www.youtube.com/watch?v=TGJHOECVvG4)
 
 ## Summary
 
