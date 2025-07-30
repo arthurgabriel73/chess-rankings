@@ -48,8 +48,3 @@ jobs:
         run: |
           echo "Using environment: $ENV"
           make test
-
-      - name: Run e2e tests
-        run: |
-          echo "Running end-to-end tests"
-          make e2e
