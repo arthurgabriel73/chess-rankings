@@ -33,3 +33,4 @@ Feature: Top Players Rating Histories
     Given I have a request to view the rating histories of the top "50" players for the "classical" category for the previous "365" days
     When I send the request to view top players rating histories
     Then I should receive a response with status code 400
+
