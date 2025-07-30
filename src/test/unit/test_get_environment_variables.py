@@ -9,7 +9,7 @@ class TestGetEnvironmentVariables:
         assert env.APP_HOST == 'localhost'
         assert env.APP_PORT == 3000
         assert env.LICHESS_API_BASE_URL == 'http://0.0.0.0:9000'
-        assert env.AWS_BUCKET_NAME == 'my-test-chess-bucket'
+        assert env.AWS_BUCKET_NAME == 'chess-rankings-local'
         assert env.AWS_USER_KEY_ID == 'my-test-aws-user-key-id'
         assert env.AWS_USER_ACCESS_KEY == 'my-test-aws-user-access-key'
         assert env.AWS_REGION == 'us-west-2'
