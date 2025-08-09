@@ -25,12 +25,14 @@ uvicorn-worker = "^0.3.0"
 
 
 
+
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.4.1"
+pytest-env = "^1.1.5"
 coverage = "^7.9.1"
 ruff = "^0.12.5"
 behave = "^1.2.6"
