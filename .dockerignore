@@ -1,2 +1,3 @@
+# The following path will be ignored by docker when we use "COPY . " in Dockerfile
 .venv
 htmlcov
