@@ -20,6 +20,8 @@ class TestPlayer:
         # Act & Assert
         with pytest.raises(ValueError, match='Username must be between 3 and 29 characters'):
             PlayerUsername('ab')
+        # match: match keyword parameter to the context-manager to test that a regular expression matches on the string representation of an exception
+        # ex: match=r".* 123 .*" will accept "Exception 123 raised"
 
     def test_should_raise_error_when_username_is_too_long(self):
         # Act & Assert
