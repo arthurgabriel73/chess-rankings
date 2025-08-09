@@ -14,6 +14,7 @@ class TestListTopPlayersUseCase:
     ui_handler: UIHandler
     sut: ListTopPlayersUseCase
 
+    # pytest.fixture will create a whole new and isolated setup for each test
     @pytest.fixture
     def setup(self):
         self.player_gateway = MockPlayerGateway()
