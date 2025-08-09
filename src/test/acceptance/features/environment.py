@@ -10,5 +10,8 @@ def before_all(context):
     context.client = TestClient(app)
 
 
+# context: Hold contextual information during the running of tests.
+
+
 def after_all(context):
     context.client.close()
