@@ -1,13 +1,23 @@
 include .env.test
 include .env.local
+# The includes above won't work as expected, it will load .env.test but the environment variables common with .env.local
+# will be override by the .env.local variables values, that's why we are using "export ENV=test" below
 
+# If you have any files named as the .PHONY list, it will ignore the file and run the make command defined here
+# So, if you have a make script called 'build' and a file called 'build' as well, and .PHONY does not includes 'build',
+# The 'build' script wouldn't work because make will try to run the 'build' file
 .PHONY: build up down clean remove-image logs
 
 export PYTHONPATH=$(pwd)
 export ENV=test
 
+run-test:
+	@echo "Using DB host: $(APP_NAME_VALUE)"
+
 test:
 	@echo "\033[0;36mRunning all tests...\033[0m"
+	# -m, --module: <pyfile> is an importable Python module, not a script path, to be run as 'python -m' would run it.
+	#  -v, --verbose: Increase verbosity
 	poetry run coverage run -m pytest -v src/test/unit
 	poetry run coverage run -m pytest -v src/test/integration
 	poetry run coverage combine
@@ -40,7 +50,11 @@ e2e: setup-localstack setup-redis setup-mock-chess-api
 
 setup-mock-chess-api:
 	@echo "\033[0;36mSetting up mock server...\033[0m"
+	# -f, --force: Force the removal of a running container (uses SIGKILL)
 	docker rm -f mock-chess-api || true
+
+	# -f, --file: Name of the Dockerfile (default: "PATH/Dockerfile")
+	# -t, --tag: Name and optionally a tag (format: "name:tag")
 	docker build -f src/test/resources/mock_api.Dockerfile -t mock_chess_api_service .
 	docker run -d --name mock-chess-api -p 9000:9000 mock_chess_api_service
 
