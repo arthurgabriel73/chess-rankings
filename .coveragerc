@@ -1,10 +1,19 @@
 [run]
+; source: (multi-string) A list of packages or directories, the source to measure during execution. If set, include is ignored.
 source = src
+
+; omit: (multi-string) A list of file name patterns, the files to leave out of measurement or reporting.
 omit = */test/*
+
+; branch: (boolean, default False) Whether to measure branch coverage in addition to statement coverage.
 branch = True
+
+; parallel: (boolean, default False) Append the machine name, process id and random number to the data file name to simplify collecting data from many processes.
 parallel = True
 
 [report]
+; exclude_lines: (multi-string) A list of regular expressions. Any line of your source code containing a match for one of these regexes is excluded from being reported as missing.
+; If you use this option, you are replacing all the exclude regexes (defined in "exclude_also"), so you’ll need to also supply the “pragma: no cover” regex if you still want to use it.
 exclude_lines =
     pragma: no cover
     @abstractmethod
