@@ -20,15 +20,15 @@ def get_player(amount: int):
 @app.get('/user/{username}/rating-history')
 def get_rating_history(username: str):
     today = datetime.now()
-    offsets_in_days = list(range(29, -1, -1))
+    offsets_in_days = list(range(29, -1, -1))  # cria uma lista [29, 28, 27, ..., 0]
     initial_rating_for_oldest_day = 1500
     rating_increase_per_day = 17
 
     dynamic_points = []
-    for i, days_ago in enumerate(offsets_in_days):
+    for i, days_ago in enumerate(offsets_in_days):  # we wouldn't have the indexes if not using enumerate
         past_date = today - timedelta(days=days_ago * 2)
         current_day_rating = initial_rating_for_oldest_day + i * rating_increase_per_day
-        current_day_rating += random.randint(-5, 5)
+        current_day_rating += random.randint(-5, 5)  # random int between -5 and 5, including -5 and 5
         current_day_rating = max(1400, current_day_rating)
 
         dynamic_points.append([past_date.year, past_date.month, past_date.day, current_day_rating])
