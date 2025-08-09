@@ -7,9 +7,18 @@ select = ["E4", "E7", "E9", "F", "N", "W", "I"]
 ignore = ["N818"]
 fixable = ["ALL"]
 unfixable = ["N818"]
+# N818: Checks for custom exception definitions that omit the Error suffix. |
+# class Validation(Exception): ...
+# should be:
+# class ValidationError(Exception): ...
 
 [format]
 quote-style = "single"
 indent-style = "space"
 skip-magic-trailing-comma = true
-line-ending = "lf"
+line-ending = "lf" # (Line Feed) Uses `\n` line endings for all files
+# Hello\nWorld\n
+# will display as:
+# Hello
+# World
+
