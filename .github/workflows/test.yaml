@@ -1,4 +1,10 @@
 name: Run Unit and Integration Tests
+# name: The name of the workflow. GitHub displays the names of your workflows under your repository's "Actions" tab.
+# If you omit name, GitHub displays the workflow file path relative to the root of the repository.
+
+run-name: Deploy to ${{ inputs.deploy_target }} by @${{ github.actor }}
+# run-name: specific identifier for each execution.
+# run-name can include expressions and reference contexts like github and inputs, allowing for dynamic run names based on event-specific information
 
 on:
   pull_request:
@@ -10,17 +16,36 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    # runs-on: defines the type of machine to run the job on.
     env:
+      # env: A map of variables that are available to all steps in the job. You can set variables for the entire workflow or an individual step.
       ENV: test
       PYTHONPATH: ${{ github.workspace }}
 
     steps:
+      # steps: A job contains a sequence of tasks called steps. Steps can run commands, run setup tasks, or run an action in your repository,
+      # a public repository, or an action published in a Docker registry.
+      # Not all steps run actions, but all actions run as a step.
       - uses: actions/checkout@v4
+        # uses: Selects an action to run as part of a step in your job. An action is a reusable unit of code.
+        # You can use an action defined in the same repository as the workflow, a public repository, or in a published Docker container image.
 
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
+          # with: A map of the input parameters defined by the action. Each input parameter is a key/value pair.
+          # Input parameters are set as environment variables. The variable is prefixed with INPUT_ and converted to upper case.
+          # Input parameters defined for a Docker container must use args. For more information, see jobs.<job_id>.steps[*].with.args.
           python-version: '3.13'
+
+          # entrypoint: /bin/echo
+          # entrypoint: Overrides the Docker ENTRYPOINT in the Dockerfile, or sets it if one wasn't already specified.
+          # Unlike the Docker ENTRYPOINT instruction which has a shell and exec form, entrypoint keyword accepts only a single string defining the executable to be run.
+
+          # args: The ${{ github.event_name }} event triggered this step.
+          # args: A string that defines the inputs for a Docker container.
+          # GitHub passes the args to the container's ENTRYPOINT when the container starts up.
+          # An array of strings is not supported by this parameter. A single argument that includes spaces should be surrounded by double quotes "".
 
       - name: Install Poetry
         uses: snok/install-poetry@v1
@@ -36,8 +61,12 @@ jobs:
             .venv
             ~/.cache/pypoetry
           key: ${{ runner.os }}-poetry-${{ hashFiles('pyproject.toml', 'poetry.lock') }}
+          # hashFiles: The hashFiles function in GitHub Actions returns a single SHA-256 hash for a set of files matching a specified path pattern.
+          # You can use it to detect changes in files and trigger workflows accordingly. The path is relative to the GITHUB_WORKSPACE directory and can only include files within it.
           restore-keys: |
             ${{ runner.os }}-poetry-
+          # runner.os: The runner.os context variable in GitHub Actions provides the operating system of the runner executing the workflow. It can be used in expressions to customize workflows based on the runner's OS.
+
 
       - name: Install dependencies
         run: |
