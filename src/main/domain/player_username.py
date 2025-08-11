@@ -6,6 +6,9 @@ class PlayerUsername:
     _value: str
     _MIN_LENGTH: int = 3
     _MAX_LENGTH: int = 29
+    # single _: is a convention to indicate to other developers that the attribute is "private", it is exclusively for internal use
+    # double __: A double underscore prefix causes the Python interpreter to rewrite the attribute name in order to avoid naming conflicts in subclasses.
+    # ex: __baz will be named as "_PlayerUsername__baz"
 
     def __post_init__(self):
         self.validate_username()

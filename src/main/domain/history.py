@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from typing import Dict, Optional
 
 
+# @dataclass: it will add various “dunder” methods to the class such as __init__() and __repr__()
 @dataclass
 class History:
     category: str
