@@ -47,6 +47,10 @@ class GenerateTopPlayersHistoriesFileUseCase(GenerateTopPlayersHistoriesFileDriv
     def _generate_histories_file(self, histories: List[History]) -> bytes:
         return self._file_generator_service.generate_history_file(histories)
 
+    # @classmethod: is a method that gets passed the class it was called on, or the class of the instance it was called on, as first argument.
+    # This is useful when you want the method to be a factory for the class
+
+    # @staticmethod: is a method that knows nothing about the class or instance it was called on. It just gets the arguments that were passed, no implicit first argument.
     @staticmethod
     def _generate_file_key(category: str, num_players: int, num_days: int, file_extension: str) -> str:
         return f'top_{num_players}_{category}_players_histories_{num_days}_days.{file_extension}'
