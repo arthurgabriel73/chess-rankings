@@ -1,5 +1,6 @@
 from starlette import status
 
+# error_responses: to be used in each route: responses=error_responses,)
 error_responses = {
     status.HTTP_400_BAD_REQUEST: {
         'description': 'Invalid request parameters',

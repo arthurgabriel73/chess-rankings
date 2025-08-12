@@ -22,6 +22,8 @@ from src.main.infra.config.ioc import (
 PLAYER_URL = '/players'
 
 players_router = APIRouter(prefix=PLAYER_URL, tags=['Players'])
+# APIRouter: used to group path operations, for example to structure an app in multiple files.
+# It would then be included in the FastAPI app, or in another APIRouter (ultimately included in the app).
 
 
 @players_router.get(
