@@ -20,6 +20,8 @@ from src.main.infra.adapter.driven.storage.aws.aws_s3_service import AwsS3Servic
 from src.main.infra.adapter.driven.storage.file_storage_service_gateway import FileStorageServiceGateway
 
 
+# @lru_cache: a threadsafe cache that uses a dictionary to cache results, if the function is called with already given arguments, it will return the cached result
+# The cached usecase instance means all calls to the factory will return the same object, which is typically desired for such driver/port instances that manage connections or other resources.
 @lru_cache
 def list_top_players_driver_factory() -> ListTopPlayersDriverPort:
     logger = logging.getLogger(' ConsoleUIHandler')

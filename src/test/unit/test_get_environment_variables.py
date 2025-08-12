@@ -5,6 +5,7 @@ class TestGetEnvironmentVariables:
     def test_get_environment_variables(self):
         get_env_filename.cache_clear()
         env = get_environment_variables()
+        print(env.model_dump())
         assert env.APP_NAME == 'chess_rankings_test'
         assert env.APP_HOST == 'localhost'
         assert env.APP_PORT == 3000
